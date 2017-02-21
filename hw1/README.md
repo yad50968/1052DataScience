@@ -1,7 +1,14 @@
 # HW1
-Read csv , Sum all data , Output csv
+Read csv<br>
+Get the heightest / weightest data we want <br>
+Output csv
 
+### Download
+```sh
+    git clone https://github.com/yad50968/1052DataScience.git
+```
 ### Run
 ```sh
-    Rscript hw1_105753036.R -files test.1.csv –out result.csv
+    cd hw1/
+    Rscript hw1_105753036.R -files {input-file-name} –out {ouput-file-name}
 ```
