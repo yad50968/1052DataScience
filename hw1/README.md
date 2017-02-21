@@ -9,6 +9,6 @@ Output csv
 ```
 ### Run
 ```sh
-    cd hw1/
+    cd 1052DataScience/hw1/
     Rscript hw1_105753036.R -files {input-file-name} –out {ouput-file-name}
 ```
