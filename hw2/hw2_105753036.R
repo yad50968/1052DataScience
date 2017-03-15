@@ -11,6 +11,7 @@ calConfusionMatrix <- function(pred, ref, target) {
 calSensitivity <- function(pred, ref, target) {
   confusionmatrix <- calConfusionMatrix(pred, ref, target)
   return (confusionmatrix[4] / (confusionmatrix[4] + confusionmatrix[1]))
+
 }
 
 calSpecificity <- function(pred, ref, target) {
@@ -18,21 +19,21 @@ calSpecificity <- function(pred, ref, target) {
   return (confusionmatrix[4] / (confusionmatrix[4] + confusionmatrix[3]))
 }
 calf1 <- function(pred, ref, target) {
-    precision = calSpecificity(pred, ref, target)
-    recall = calSensitivity(pred, ref, target)
-    return (2 * precision * recall / (precision + recall))
+  precision = calSpecificity(pred, ref, target)
+  recall = calSensitivity(pred, ref, target)
+  return (2 * precision * recall / (precision + recall))
 }
 
 calauc <- function(predscore, ref) {
-    eval <- prediction(predscore, ref)
-    auc <- attributes(performance(eval, 'auc'))$y.values[[1]]
-    return (auc)
+  eval <- prediction(predscore, ref)
+  auc <- attributes(performance(eval, 'auc'))$y.values[[1]]
+  return (auc)
 }
 
 # read parameters
 args = commandArgs(trailingOnly=TRUE)
 if (length(args)==0) {
-  stop("USAGE: Rscript hw1.R --target male|female --files file1 file2 ... filen --out out.csv", call.=FALSE)
+  stop("USAGE: Rscript hw2_105753036.R --target male|female --files file1 file2 ... filen --out out.csv", call.=FALSE)
 }
 
 # parse parameters
@@ -66,15 +67,17 @@ aucResult <- c()
 sensitivityResult <- c()
 specificityResult <- c()
 
-for(file in files){
-  print(file)
+for(file in files) {
   method <- gsub(".csv", "", basename(file))
   d <- read.table(file, header = T, sep = ",")
+
+  # cal all function
   f1  <- round(calf1(d$prediction, d$reference, query_m), digit=2)
   auc <- round(calauc(d$pred.score, d$reference), digit=2)
   sensitivity <- round(calSensitivity(d$prediction, d$reference, query_m), digit = 2)
   specificity <- round(calSpecificity(d$prediction, d$reference, query_m), digit = 2)
 
+  # add result to vector
   methods <- c(methods, method)
   f1Result <- c(f1Result, f1)
   aucResult <- c(aucResult, auc)
