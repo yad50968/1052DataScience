@@ -1,39 +1,57 @@
-query_func<-function(query_m, i)
-{
-  if(query_m == "male"){
-    which.min(i)
-  }
-  else if (query_m == "female") {
-    which.max(i)
-  } else {
-    stop(paste("ERROR: unknown query function", query_m))
-  }
+library('ROCR')
+
+
+calConfusionMatrix <- function(pred, ref, target) {
+  tandf = c(pred == ref)
+  pandn = c(pred == target)
+  confusionmatrix <- table(truth = tandf, prediction = pandn)
+  return (confusionmatrix)
+}
+
+calSensitivity <- function(pred, ref, target) {
+  confusionmatrix <- calConfusionMatrix(pred, ref, target)
+  return (confusionmatrix[4] / (confusionmatrix[4] + confusionmatrix[1]))
+}
+
+calSpecificity <- function(pred, ref, target) {
+  confusionmatrix <- calConfusionMatrix(pred, ref, target)
+  return (confusionmatrix[4] / (confusionmatrix[4] + confusionmatrix[3]))
+}
+calf1 <- function(pred, ref, target) {
+    precision = calSpecificity(pred, ref, target)
+    recall = calSensitivity(pred, ref, target)
+    return (2 * precision * recall / (precision + recall))
+}
+
+calauc <- function(predscore, ref) {
+    eval <- prediction(predscore, ref)
+    auc <- attributes(performance(eval, 'auc'))$y.values[[1]]
+    return (auc)
 }
 
 # read parameters
 args = commandArgs(trailingOnly=TRUE)
 if (length(args)==0) {
-  stop("USAGE: Rscript hw1.R -query min|max -files file1 file2 ... filen –out out.csv", call.=FALSE)
+  stop("USAGE: Rscript hw1.R --target male|female --files file1 file2 ... filen --out out.csv", call.=FALSE)
 }
 
 # parse parameters
 i<-1 
-while(i < length(args))
-{
-  if(args[i] == "-query"){
-    query_m<-args[i+1]
-    i<-i+1
-  }else if(args[i] == "-files"){
-    j<-grep("-", c(args[(i+1):length(args)], "-"))[1]
-    files<-args[(i+1):(i+j-1)]
-    i<-i+j-1
-  }else if(args[i] == "-out"){
-    out_f<-args[i+1]
-    i<-i+1
-  }else{
+while(i < length(args)) {
+  if(args[i] == "--target") {
+    query_m <- args[i+1]
+    i <- i+1
+  } else if(args[i] == "--files") {
+    j <- grep("-", c(args[(i+1):length(args)], "-"))[1]
+    files <- args[(i+1):(i+j-1)]
+    i <- i+j-1
+  } else if(args[i] == "--out") {
+    out_f <- args[i+1]
+    i <- i+1
+  } else {
     stop(paste("Unknown flag", args[i]), call.=FALSE)
   }
-  i<-i+1
+  i <- i+1
 }
 
 print("PROCESS")
@@ -42,20 +60,34 @@ print(paste("output file:", out_f))
 print(paste("files      :", files))
 
 # read files
-names<-c()
-weis<-c()
-heis<-c()
-for(file in files)
-{
-  name<-gsub(".csv", "", basename(file))
-  d<-read.table(file, header=T,sep=",")
-  weis<-c(weis, d$weight[query_func(query_m, d$weight)])
-  heis<-c(heis, d$height[query_func(query_m, d$height)])
-  names<-c(names,name)
+methods <- c()
+f1Result <- c()
+aucResult <- c()
+sensitivityResult <- c()
+specificityResult <- c()
+
+for(file in files){
+  print(file)
+  method <- gsub(".csv", "", basename(file))
+  d <- read.table(file, header = T, sep = ",")
+  f1  <- round(calf1(d$prediction, d$reference, query_m), digit=2)
+  auc <- round(calauc(d$pred.score, d$reference), digit=2)
+  sensitivity <- round(calSensitivity(d$prediction, d$reference, query_m), digit = 2)
+  specificity <- round(calSpecificity(d$prediction, d$reference, query_m), digit = 2)
+
+  methods <- c(methods, method)
+  f1Result <- c(f1Result, f1)
+  aucResult <- c(aucResult, auc)
+  sensitivityResult <- c(sensitivityResult, sensitivity)
+  specificityResult <- c(specificityResult, specificity)
 }
-out_data<-data.frame(set=names, wei=weis, hei=heis, stringsAsFactors = F)
-index<-sapply(out_data[,c("wei","hei")], query_func, query_m=query_m)
+print(f1Result)
+print(sensitivityResult)
+print(specificityResult)
+print(aucResult)
+out_data <- data.frame(method = methods, sensitivity = sensitivity, specificity = specificity, F1 = f1Result, AUC=aucResult, stringsAsFactors = F)
+index <- apply(out_data[,-1], 2, which.max) 
 
 # output file
-out_data<-rbind(out_data,c(query_m,names[index]))
-write.table(out_data, file=out_f, row.names = F, quote = F)
+out_data <- rbind(out_data,c("highest",methods[index]))
+write.table(out_data, file=out_f,  sep=",", row.names = F, quote = F)
