@@ -85,7 +85,7 @@ for(file in files) {
   specificityResult <- c(specificityResult, specificity)
 }
 
-out_data <- data.frame(method = methods, sensitivity = sensitivity, specificity = specificity, F1 = f1Result, AUC=aucResult, stringsAsFactors = F)
+out_data <- data.frame(method = methods, sensitivity = sensitivity, specificity = specificity, F1 = f1Result, AUC = aucResult, stringsAsFactors = F)
 index <- apply(out_data[,-1], 2, which.max) 
 
 # output file
