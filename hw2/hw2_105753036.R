@@ -1,6 +1,5 @@
 library('ROCR')
 
-
 calConfusionMatrix <- function(pred, ref, target) {
   tandf = c(pred == ref)
   pandn = c(pred == target)
@@ -11,13 +10,13 @@ calConfusionMatrix <- function(pred, ref, target) {
 calSensitivity <- function(pred, ref, target) {
   confusionmatrix <- calConfusionMatrix(pred, ref, target)
   return (confusionmatrix[4] / (confusionmatrix[4] + confusionmatrix[1]))
-
 }
 
 calSpecificity <- function(pred, ref, target) {
   confusionmatrix <- calConfusionMatrix(pred, ref, target)
   return (confusionmatrix[4] / (confusionmatrix[4] + confusionmatrix[3]))
 }
+
 calf1 <- function(pred, ref, target) {
   precision = calSpecificity(pred, ref, target)
   recall = calSensitivity(pred, ref, target)
@@ -32,12 +31,12 @@ calauc <- function(predscore, ref) {
 
 # read parameters
 args = commandArgs(trailingOnly=TRUE)
-if (length(args)==0) {
+if (length(args) == 0) {
   stop("USAGE: Rscript hw2_105753036.R --target male|female --files file1 file2 ... filen --out out.csv", call.=FALSE)
 }
 
 # parse parameters
-i<-1 
+i <- 1 
 while(i < length(args)) {
   if(args[i] == "--target") {
     query_m <- args[i+1]
