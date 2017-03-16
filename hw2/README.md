@@ -11,5 +11,5 @@ Output csv
 ### Run
 ```sh
     cd 1052DataScience/hw2/
-    Rscript hw2_105753036.R --target male/female --files file1 file2 ... filen --out result.csv
+    Rscript hw2_105753036.R --target male|female --files file1 file2 ... filen --out result.csv
 ```
