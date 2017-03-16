@@ -89,5 +89,5 @@ out_data <- data.frame(method = methods, sensitivity = sensitivity, specificity 
 index <- apply(out_data[,-1], 2, which.max) 
 
 # output file
-out_data <- rbind(out_data,c("highest",methods[index]))
-write.table(out_data, file=out_f,  sep=",", row.names = F, quote = F)
+out_data <- rbind(out_data, c("highest", methods[index]))
+write.table(out_data, file = out_f, sep = ",", row.names = F, quote = F)
