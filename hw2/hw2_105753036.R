@@ -16,10 +16,14 @@ calSensitivity <- function(pred, ref, target) {
 
 calSpecificity <- function(pred, ref, target) {
   confusionmatrix <- calConfusionMatrix(pred, ref, target)
-  return (confusionmatrix[4] / (confusionmatrix[4] + confusionmatrix[3]))
+  return (confusionmatrix[2] / (confusionmatrix[2] + confusionmatrix[3]))
+}
+calPrecision <- function(pred, ref, target) {
+  confusionmatrix <- calConfusionMatrix(pred, ref, target)
+  return (confusionmatrix[4] / (confusionmatrix[4] + confusionmatrix[1]))
 }
 calf1 <- function(pred, ref, target) {
-  precision = calSpecificity(pred, ref, target)
+  precision = calPrecision(pred, ref, target)
   recall = calSensitivity(pred, ref, target)
   return (2 * precision * recall / (precision + recall))
 }
