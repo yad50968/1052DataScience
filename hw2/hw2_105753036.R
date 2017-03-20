@@ -1,6 +1,5 @@
 library('ROCR')
 
-
 calConfusionMatrix <- function(pred, ref, target) {
   tandf = c(pred == ref)
   pandn = c(pred == target)
@@ -11,7 +10,6 @@ calConfusionMatrix <- function(pred, ref, target) {
 calSensitivity <- function(pred, ref, target) {
   confusionmatrix <- calConfusionMatrix(pred, ref, target)
   return (confusionmatrix[4] / (confusionmatrix[4] + confusionmatrix[1]))
-
 }
 
 calSpecificity <- function(pred, ref, target) {
@@ -22,6 +20,7 @@ calPrecision <- function(pred, ref, target) {
   confusionmatrix <- calConfusionMatrix(pred, ref, target)
   return (confusionmatrix[4] / (confusionmatrix[4] + confusionmatrix[1]))
 }
+
 calf1 <- function(pred, ref, target) {
   precision = calPrecision(pred, ref, target)
   recall = calSensitivity(pred, ref, target)
@@ -36,12 +35,12 @@ calauc <- function(predscore, ref) {
 
 # read parameters
 args = commandArgs(trailingOnly=TRUE)
-if (length(args)==0) {
+if (length(args) == 0) {
   stop("USAGE: Rscript hw2_105753036.R --target male|female --files file1 file2 ... filen --out out.csv", call.=FALSE)
 }
 
 # parse parameters
-i<-1 
+i <- 1 
 while(i < length(args)) {
   if(args[i] == "--target") {
     query_m <- args[i+1]
@@ -89,9 +88,9 @@ for(file in files) {
   specificityResult <- c(specificityResult, specificity)
 }
 
-out_data <- data.frame(method = methods, sensitivity = sensitivity, specificity = specificity, F1 = f1Result, AUC=aucResult, stringsAsFactors = F)
+out_data <- data.frame(method = methods, sensitivity = sensitivity, specificity = specificity, F1 = f1Result, AUC = aucResult, stringsAsFactors = F)
 index <- apply(out_data[,-1], 2, which.max) 
 
 # output file
-out_data <- rbind(out_data,c("highest",methods[index]))
-write.table(out_data, file=out_f,  sep=",", row.names = F, quote = F)
+out_data <- rbind(out_data, c("highest", methods[index]))
+write.table(out_data, file = out_f, sep = ",", row.names = F, quote = F)
