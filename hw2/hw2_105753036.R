@@ -25,8 +25,6 @@ calf1 <- function(pred, ref, target) {
   precision = calPrecision(pred, ref, target)
   recall = calSensitivity(pred, ref, target)
   print(2 * precision * recall / (precision + recall))
-
-
   return (2 * precision * recall / (precision + recall))
 }
 
