@@ -116,9 +116,7 @@ for(i in 1:4) {
   second_file <- read.table(files_name[sec_index[i]], header = T, sep = ",")
   second_zero_one <- ifelse(second_file$prediction == second_file$reference, 1, 0)
   contingency_table <- table(best_zero_one, second_zero_one)
-  print(fisher.test(contingency_table)$p.value)
   if(fisher.test(contingency_table)$p.value < 0.05) {
-
     output_methods[i] <- paste0(methods[index[i]], "*")
   }
 }
