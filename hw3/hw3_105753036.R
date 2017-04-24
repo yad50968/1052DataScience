@@ -18,7 +18,7 @@ calSpecificity <- function(pred, ref, target) {
 }
 calPrecision <- function(pred, ref, target) {
   confusionmatrix <- calConfusionMatrix(pred, ref, target)
-  return (confusionmatrix[4] / (confusionmatrix[4] + confusionmatrix[1]))
+  return (confusionmatrix[4] / (confusionmatrix[4] + confusionmatrix[3]))
 }
 
 calf1 <- function(pred, ref, target) {
@@ -31,6 +31,10 @@ calauc <- function(predscore, ref) {
   eval <- prediction(predscore, ref)
   auc <- attributes(performance(eval, 'auc'))$y.values[[1]]
   return (auc)
+}
+
+getSecondIndex <- function(x) {
+  return (which(x == sort(x,partial=length(x)-1)[length(x)-1]))
 }
 
 # read parameters
@@ -69,6 +73,7 @@ f1Result <- c()
 aucResult <- c()
 sensitivityResult <- c()
 specificityResult <- c()
+files_name <- c()
 
 for(file in files) {
   method <- gsub(".csv", "", basename(file))
@@ -80,7 +85,14 @@ for(file in files) {
   sensitivity <- round(calSensitivity(d$prediction, d$reference, query_m), digit = 2)
   specificity <- round(calSpecificity(d$prediction, d$reference, query_m), digit = 2)
 
+  f1 <- replace(f1, is.nan(f1), 0)
+  auc <- replace(auc, is.nan(auc), 0)
+  sensitivity <- replace(sensitivity, is.nan(sensitivity), 0)
+  specificity <- replace(specificity, is.nan(specificity), 0)
+  
   # add result to vector
+  files_name <- c(files_name, file)
+  print(files_name)
   methods <- c(methods, method)
   f1Result <- c(f1Result, f1)
   aucResult <- c(aucResult, auc)
@@ -88,9 +100,29 @@ for(file in files) {
   specificityResult <- c(specificityResult, specificity)
 }
 
-out_data <- data.frame(method = methods, sensitivity = sensitivity, specificity = specificity, F1 = f1Result, AUC = aucResult, stringsAsFactors = F)
+out_data <- data.frame(method = methods, sensitivity = sensitivityResult, specificity = specificityResult, F1 = f1Result, AUC = aucResult, stringsAsFactors = F)
 index <- apply(out_data[,-1], 2, which.max) 
 
+if(length(out_data$method) > 1) {
+  sec_index <- c(getSecondIndex(out_data$sensitivity), getSecondIndex(out_data$specificity), getSecondIndex(out_data$F1), getSecondIndex(out_data$AUC))
+} else {
+  sec_index <- index
+}
+
+output_methods <- methods[index]
+for(i in 1:4) {
+  best_file <- read.table(files_name[index[i]], header = T, sep = ",")
+  best_zero_one <- ifelse(best_file$prediction == best_file$reference, 1, 0)
+  second_file <- read.table(files_name[sec_index[i]], header = T, sep = ",")
+  second_zero_one <- ifelse(second_file$prediction == second_file$reference, 1, 0)
+  contingency_table <- table(best_zero_one, second_zero_one)
+  print(fisher.test(contingency_table)$p.value)
+  if(fisher.test(contingency_table)$p.value < 0.05) {
+
+    output_methods[i] <- paste0(methods[index[i]], "*")
+  }
+}
+
 # output file
-out_data <- rbind(out_data, c("highest", methods[index]))
+out_data <- rbind(out_data, c("highest", output_methods))
 write.table(out_data, file = out_f, sep = ",", row.names = F, quote = F)
