@@ -2,7 +2,7 @@
 Read csv<br>
 Calculate the sensitivity / specificity / F1 / AUC </br>
 Get the heightest method  <br>
-Also check the p-value with second heightest method , if p-value < 0.05, we add "*" label <br>
+Also check the p-value with second heightest method @ F1 , if p-value < 0.05, we add "*" label <br>
 Output csv
 
 ### Download
