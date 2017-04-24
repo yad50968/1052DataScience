@@ -102,25 +102,33 @@ for(file in files) {
 out_data <- data.frame(method = methods, sensitivity = sensitivityResult, specificity = specificityResult, F1 = f1Result, AUC = aucResult, stringsAsFactors = F)
 index <- apply(out_data[,-1], 2, which.max) 
 
-# get second best method
-if(length(out_data$method) > 1) {
-  sec_index <- c(getSecondIndex(out_data$sensitivity), getSecondIndex(out_data$specificity), getSecondIndex(out_data$F1), getSecondIndex(out_data$AUC))
-} else {
-  sec_index <- index
-}
 
 output_methods <- methods[index]
 
-if(length(out_data$method) > 1) {  #only consider method > 1 and F1
+
+#only consider method > 1 and F1
+if(length(out_data$method) > 1) {
+
+  sec_F1_index <- getSecondIndex(out_data$F1)
   best_file <- read.table(files_name[index[3]], header = T, sep = ",")
   best_zero_one <- ifelse(best_file$prediction == best_file$reference, 1, 0)
-  second_file <- read.table(files_name[sec_index[3]], header = T, sep = ",")
+
+  second_file <- read.table(files_name[sec_F1_index], header = T, sep = ",")
   second_zero_one <- ifelse(second_file$prediction == second_file$reference, 1, 0)
-  contingency_table <- table(best_zero_one, second_zero_one)
+
+  d <- rbind(
+      data.frame(group='A', value=best_zero_one),
+      data.frame(group='B', value=second_zero_one)
+  )
+  contingency_table <- table(d)
+
   if(fisher.test(contingency_table)$p.value < 0.05) {
     output_methods[3] <- paste0(methods[index[3]], "*")
   }
+} else {
+  sec_F1_index <- index[3]
 }
+
 
 # output file
 out_data <- rbind(out_data, c("highest", output_methods))
