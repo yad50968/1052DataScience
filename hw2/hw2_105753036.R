@@ -24,7 +24,6 @@ calPrecision <- function(pred, ref, target) {
 calf1 <- function(pred, ref, target) {
   precision = calPrecision(pred, ref, target)
   recall = calSensitivity(pred, ref, target)
-  print(2 * precision * recall / (precision + recall))
   return (2 * precision * recall / (precision + recall))
 }
 
@@ -81,6 +80,11 @@ for(file in files) {
   sensitivity <- round(calSensitivity(d$prediction, d$reference, query_m), digit = 2)
   specificity <- round(calSpecificity(d$prediction, d$reference, query_m), digit = 2)
 
+  f1 <- replace(f1, is.nan(f1), 0)
+  auc <- replace(auc, is.nan(auc), 0)
+  sensitivity <- replace(sensitivity, is.nan(sensitivity), 0)
+  specificity <- replace(specificity, is.nan(specificity), 0)
+  
   # add result to vector
   methods <- c(methods, method)
   f1Result <- c(f1Result, f1)
