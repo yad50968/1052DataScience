@@ -112,14 +112,14 @@ if(length(out_data$method) > 1) {
 output_methods <- methods[index]
 
 if(length(out_data$method) > 1) {  #only consider method > 1 and F1
-    best_file <- read.table(files_name[index[3]], header = T, sep = ",")
-    best_zero_one <- ifelse(best_file$prediction == best_file$reference, 1, 0)
-    second_file <- read.table(files_name[sec_index[3]], header = T, sep = ",")
-    second_zero_one <- ifelse(second_file$prediction == second_file$reference, 1, 0)
-    contingency_table <- table(best_zero_one, second_zero_one)
-    if(fisher.test(contingency_table)$p.value < 0.05) {
-      output_methods[3] <- paste0(methods[index[3]], "*")
-    }
+  best_file <- read.table(files_name[index[3]], header = T, sep = ",")
+  best_zero_one <- ifelse(best_file$prediction == best_file$reference, 1, 0)
+  second_file <- read.table(files_name[sec_index[3]], header = T, sep = ",")
+  second_zero_one <- ifelse(second_file$prediction == second_file$reference, 1, 0)
+  contingency_table <- table(best_zero_one, second_zero_one)
+  if(fisher.test(contingency_table)$p.value < 0.05) {
+    output_methods[3] <- paste0(methods[index[3]], "*")
+  }
 }
 
 # output file
