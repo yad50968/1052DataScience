@@ -111,12 +111,9 @@ if(length(out_data$method) > 1) {
 
   sec_F1_index <- getSecondIndex(out_data$F1)
   best_file <- read.table(files_name[index[3]], header = T, sep = ",")
-  best_zero_one <- ifelse(best_file$prediction == best_file$reference, 1, 0)
-
   second_file <- read.table(files_name[sec_F1_index], header = T, sep = ",")
-  second_zero_one <- ifelse(second_file$prediction == second_file$reference, 1, 0)
 
-  contingency_table <- table(best_zero_one, second_zero_one)
+  contingency_table <- table(best_file$prediction, second_file$prediction)
   print(contingency_table)
   print(fisher.test(contingency_table)$p.value)
   if(fisher.test(contingency_table)$p.value < 0.05) {
