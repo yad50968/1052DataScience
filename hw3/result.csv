@@ -1,4 +1,4 @@
 method,sensitivity,specificity,F1,AUC
-method7,0.53,0.5,0.46,0.57
 method1,0.33,0.5,0.31,0.44
-highest,method7,method7,method7,method7
+method5,0.6,0.46,0.49,0.54
+highest,method5,method1,method5*,method5
