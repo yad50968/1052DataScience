@@ -1,8 +1,15 @@
 library(shiny)
-channel_chr = list("a","d")
+library(ggplot2)
 
 shinyUI(fluidPage(
-   checkboxGroupInput("channel", label = "Channel(s)", 
-                       choices = channel_chr,
-                       selected = as.character(channel_chr))
+	headerPanel("Data Sciense HW4"),
+	sidebarLayout(
+	sidebarPanel(
+     	uiOutput("methods"),
+  		uiOutput("target")
+    ),
+	mainPanel(
+		plotOutput("plot", width = "100%")
+    )
+  )
 ))
