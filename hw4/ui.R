@@ -9,7 +9,11 @@ shinyUI(fluidPage(
   		uiOutput("target")
     ),
 	mainPanel(
-		plotOutput("plot", width = "100%")
+		tabsetPanel(type = "tabs", 
+                  tabPanel("plot", plotOutput("plot")),
+                  tabPanel("table", tableOutput("table"))
+      )
+
     )
   )
 ))

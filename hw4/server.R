@@ -16,7 +16,7 @@ shinyServer(function(input, output) {
 
 	output$plot <- renderPlot({
 
-		files = input$methods 
+		files <- input$methods 
 
 		if(is.null(files)) {
 			return()
@@ -39,12 +39,45 @@ shinyServer(function(input, output) {
 		  specificityResult <- c(specificityResult, specificity)
 		}
 
-		sensitivity = sensitivityResult
-		specificity = specificityResult
-		data = do.call(rbind.data.frame, Map('c', sensitivity, specificity))
-		ggplot(data, aes(x=specificity, y=sensitivity)) + geom_point()
+		data = do.call(rbind.data.frame, Map('c', sensitivityResult, specificityResult))
+		ggplot(data, aes(x=specificityResult, y=sensitivityResult)) + geom_point()
 		
-	})         
+	})   
+
+	output$table <- renderTable({
+
+		files <- input$methods 
+		
+
+		if(is.null(files)) {
+			return()
+		}
+
+		target = input$target
+		sensitivityResult <- c()
+		specificityResult <- c()
+		methods <- c()
+
+		for(file in files) {
+		  d <- read.table(paste0("./methods/",file), header = T, sep = ",")
+		  
+  		  method <- gsub(".csv", "", basename(file))
+		  sensitivity <- round(calSensitivity(d$prediction, d$reference, target), digit = 2)
+		  specificity <- round(calSpecificity(d$prediction, d$reference, target), digit = 2)
+
+		  sensitivity <- replace(sensitivity, is.nan(sensitivity), 0)
+		  specificity <- replace(specificity, is.nan(specificity), 0)
+		  
+		  methods <- c(methods, method)
+		  sensitivityResult <- c(sensitivityResult, sensitivity)
+		  specificityResult <- c(specificityResult, specificity)
+		}
+
+		data <- cbind(method=methods, sensensitivity=sensitivityResult, specificity=specificityResult)
+		data
+   
+
+	})     
 })
 
 calConfusionMatrix <- function(pred, ref, target) {
