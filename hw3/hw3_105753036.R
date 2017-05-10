@@ -34,7 +34,7 @@ calauc <- function(predscore, ref) {
 }
 
 getSecondIndex <- function(x) {
-  return (which(x == sort(x,partial=length(x)-1)[length(x)-1]))
+  return (which(x == sort(x,partial=length(x)-1)[length(x)-1])[1])
 }
 
 # read parameters
@@ -108,6 +108,7 @@ output_methods <- methods[index]
 
 #only consider method > 1 and F1
 if(length(out_data$method) > 1) {
+
 
   sec_F1_index <- getSecondIndex(out_data$F1)
   best_file <- read.table(files_name[index[3]], header = T, sep = ",")
