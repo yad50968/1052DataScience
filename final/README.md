@@ -2,14 +2,14 @@
 
 For NCCU 1052 Data Science Final Project <br>
 Finish a machine learning challenged hosted by Kaggle in conjunction with Expedia : [Expedia-personalized-sort](https://www.kaggle.com/c/expedia-personalized-sort)
-and usep spark for this project.
+and use spark for this project.
 
 
 ### What features I choose
 1. visitor_hist_starrating
 2. prpo_starrating
 3. prop_review_score
-4.prop_brand_bool
+4. prop_brand_bool
 5. prop_location_score1
 6. prop_location_score2
 7. position
@@ -33,7 +33,7 @@ And get the same number of rows with awk
 ### Run
 Use spark to run the python script
 ```sh
-spark-submit --master local ./Main.py
+    spark-submit --master local ./Main.py
 ```
 
 ### Algorithm
