@@ -1,6 +1,5 @@
 # NCCU 1052 Data Science Final Project
 
-For NCCU 1052 Data Science Final Project <br>
 Finish a machine learning challenged hosted by Kaggle in conjunction with Expedia : [Expedia-personalized-sort](https://www.kaggle.com/c/expedia-personalized-sort)
 and use spark for this project.
 
