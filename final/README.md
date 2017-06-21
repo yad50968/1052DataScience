@@ -11,9 +11,8 @@ and use spark for this project.
 4. prop_brand_bool
 5. prop_location_score1
 6. prop_location_score2
-7. position
-8. promotion_flag
-9. orig_destination_distance
+7. promotion_flag
+8. orig_destination_distance
 
 ### What data I predict
 1. booking_bool
